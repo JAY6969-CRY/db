@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DONT SEE HERE BRO</title>
+
+<style>
+    body {
+        background-color: #0d0d0d;
+        color: #ffffff;
+        font-family: Consolas, monospace;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    h2 {
+        border-bottom: 1px solid #444;
+        padding-bottom: 5px;
+        margin-top: 40px;
+    }
+
+    .code-container {
+        background: #111;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        position: relative;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    pre {
+        overflow-x: auto;
+        white-space: pre-wrap;
+    }
+
+    button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #000;
+        color: #fff;
+        border: 1px solid #444;
+        padding: 6px 12px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background: #222;
+    }
+</style>
+
+</head>
+<body>
+
+<h1>DONT SEE HERE BRO</h1>
+
+<!-- 1 -->
+<h2>1. Office Database</h2>
+<div class="code-container">
+<button onclick="copyCode('code1')">Copy</button>
+<pre id="code1">
+create database office;
+use office;
+
+create table Employee (
+    Empno int,
+    Ename varchar(50),
+    Job varchar(50),
+    Manager_no int,
+    Sal decimal(10,2),
+    Comm decimal(10,2)
+);
+
+desc Employee;
+
+insert into Employee values (1, 'Ammu', 'Nurse', NULL, 500.00, NULL);
+insert into Employee values (2, NULL, 'Teacher', 1, 1000.00, 50.00);
+insert into Employee values (3, 'Alice', NULL, 1, 50.00, 10.00);
+
+select * from Employee;
+
+create user 'newuser'@'localhost' identified by 'password';
+grant all privileges on *.* to 'newuser'@'localhost';
+flush privileges;
+
+insert into Employee values (4, 'Ape', NULL, 1, 40.00, 20.00);
+insert into Employee values (5, 'Cleaner', NULL, 1, 70.00, 80.00);
+
+rollback;
+
+select * from Employee;
+
+alter table Employee 
+add constraint emp_pk primary key (Empno);
+
+alter table Employee 
+modify Sal decimal(10,2) not null;
+
+insert into Employee values (6, 'Test', NULL, 1, NULL, 20.00);
+</pre>
+</div>
+
+<!-- 2 -->
+<h2>2. Army Database</h2>
+<div class="code-container">
+<button onclick="copyCode('code2')">Copy</button>
+<pre id="code2">
+create database army;
+use army;
+
+create table Employee1 (
+    empno int,
+    ename varchar(50),
+    job varchar(50),
+    mgr varchar(50),
+    salary decimal(10,2)
+);
+
+desc Employee1;
+
+alter table Employee1 add commission decimal(10,2);
+
+insert into Employee1 values (1, 'lily', 'nurse', 'ram', 100.00, 200.00);
+insert into Employee1 values (2, 'rose', 'nurse', 'jay', 800.00, 70.00);
+insert into Employee1 values (3, 'tulip', 'clerk', 'job', 900.00, 10.00);
+insert into Employee1 values (4, 'orchid', 'maintain', 'lakshi', 200.00, 40.00);
+insert into Employee1 values (5, 'lotus', 'teacher', 'lyra', 30.00, 300.00);
+
+select * from Employee1;
+
+update Employee1 
+set job = 'senior clerk' 
+where empno = 2;
+
+alter table Employee1 
+change ename empname varchar(50);
+
+delete from Employee1 where empno = 4;
+</pre>
+</div>
+
+<!-- 3 -->
+<h2>3. Bag Database</h2>
+<div class="code-container">
+<button onclick="copyCode('code3')">Copy</button>
+<pre id="code3">
+create database bag;
+use bag;
+
+create table employee2 (
+    eid int primary key,
+    ename varchar(50),
+    age int,
+    salary decimal(10,2)
+);
+
+insert into employee2 values (1, 'maria', 27, 5000.00);
+insert into employee2 values (2, 'rahul', 32, 5000.00);
+insert into employee2 values (3, 'eva', 32, 6000.00);
+insert into employee2 values (4, 'kiran', 40, 5000.00);
+insert into employee2 values (5, 'mathew', 25, 8000.00);
+
+select * from employee2;
+
+select count(ename) as NumberOfEmployees from employee2;
+select max(age) as MaximumAge from employee2;
+select min(age) as MinimumAge from employee2;
+
+select eid, ename, salary 
+from employee2 
+order by salary asc;
+
+select salary, count(*) as NumberOfEmployees
+from employee2
+group by salary;
+</pre>
+</div>
+
+<!-- 4 -->
+<h2>4. Trigger Database</h2>
+<div class="code-container">
+<button onclick="copyCode('code4')">Copy</button>
+<pre id="code4">
+create database man;
+use man;
+
+create table customers (
+    id int primary key,
+    name varchar(100),
+    age int,
+    address varchar(100),
+    salary decimal(10,2)
+);
+
+create table salary_audit (
+    logid int auto_increment primary key,
+    custid int,
+    actiontype varchar(20),
+    old_salary decimal(10,2),
+    new_salary decimal(10,2),
+    salary_diff decimal(10,2),
+    changedate datetime
+);
+
+desc salary_audit;
+
+delimiter $$
+
+create trigger cust_insert_audit
+after insert on customers
+for each row
+begin
+    insert into salary_audit 
+    (custid, actiontype, old_salary, new_salary, salary_diff)
+    values 
+    (new.id, 'INSERT', null, new.salary, null);
+end$$
+
+create trigger cust_delete_audit
+after delete on customers
+for each row
+begin
+    insert into salary_audit 
+    (custid, actiontype, old_salary, new_salary, salary_diff)
+    values 
+    (old.id, 'DELETE', old.salary, null, null);
+end$$
+
+create trigger cust_update_audit
+after update on customers
+for each row
+begin
+    insert into salary_audit 
+    (custid, actiontype, old_salary, new_salary, salary_diff)
+    values 
+    (old.id, 'UPDATE', old.salary, new.salary, new.salary - old.salary);
+end$$
+
+delimiter ;
+
+insert into customers values (1, 'john', 30, 'bangalore', 50000.00);
+
+select * from salary_audit;
+
+update customers 
+set salary = 60000.00 
+where id = 1;
+
+select * from salary_audit;
+
+delete from customers where id = 1;
+
+select * from salary_audit;
+</pre>
+</div>
+
+<script>
+function copyCode(id) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text);
+    alert("Copied!");
+}
+</script>
+
+</body>
+</html>
