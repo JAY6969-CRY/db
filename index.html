@@ -190,55 +190,49 @@ create database man;
 use man;
 
 create table customers (
-    id int primary key,
-    name varchar(100),
-    age int,
-    address varchar(100),
-    salary decimal(10,2)
+id int primary key,
+name varchar(100),
+age int,
+address varchar(100),
+salary decimal(10,2)
 );
 
 create table salary_audit (
-    logid int auto_increment primary key,
-    custid int,
-    actiontype varchar(20),
-    old_salary decimal(10,2),
-    new_salary decimal(10,2),
-    salary_diff decimal(10,2),
-    changedate datetime
+logid int auto_increment primary key,
+custid int,
+actiontype varchar(50),
+old_salary decimal(10,2),
+new_salary decimal(10,2),
+salary_diff decimal(10,2),
+changedate datetime
 );
 
 desc salary_audit;
 
 delimiter $$
 
-create trigger cust_insert_audit
+create trigger custid_insert_audit
 after insert on customers
 for each row
 begin
-    insert into salary_audit 
-    (custid, actiontype, old_salary, new_salary, salary_diff)
-    values 
-    (new.id, 'INSERT', null, new.salary, null);
+insert into salary_audit (custid, actiontype, old_salary, new_salary, salary_diff, changedate)
+values (new.id, 'insert', null, new.salary, null, now());
 end$$
 
-create trigger cust_delete_audit
+create trigger custid_delete_audit
 after delete on customers
 for each row
 begin
-    insert into salary_audit 
-    (custid, actiontype, old_salary, new_salary, salary_diff)
-    values 
-    (old.id, 'DELETE', old.salary, null, null);
+insert into salary_audit (custid, actiontype, old_salary, new_salary, salary_diff, changedate)
+values (old.id, 'delete', old.salary, null, null, now());
 end$$
 
-create trigger cust_update_audit
+create trigger custid_update_audit
 after update on customers
 for each row
 begin
-    insert into salary_audit 
-    (custid, actiontype, old_salary, new_salary, salary_diff)
-    values 
-    (old.id, 'UPDATE', old.salary, new.salary, new.salary - old.salary);
+insert into salary_audit (custid, actiontype, old_salary, new_salary, salary_diff, changedate)
+values (old.id, 'update', old.salary, new.salary, new.salary - old.salary, now());
 end$$
 
 delimiter ;
@@ -247,13 +241,14 @@ insert into customers values (1, 'john', 30, 'bangalore', 50000.00);
 
 select * from salary_audit;
 
-update customers 
-set salary = 60000.00 
+update customers
+set salary = 60000
 where id = 1;
 
 select * from salary_audit;
 
-delete from customers where id = 1;
+delete from customers
+where id = 1;
 
 select * from salary_audit;
 </pre>
