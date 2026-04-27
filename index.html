@@ -2,265 +2,441 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>DONT SEE HERE BRO</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARM Assembly Lab Programs</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-    body {
-        background-color: #0d0d0d;
-        color: #ffffff;
-        font-family: Consolas, monospace;
-        margin: 0;
-        padding: 20px;
-    }
+  :root {
+    --bg: #080808;
+    --surface: #0f0f0f;
+    --card: #111111;
+    --border: #1e1e1e;
+    --accent: #e8ff3a;
+    --accent2: #3affc8;
+    --text: #e8e8e8;
+    --muted: #555;
+    --code-bg: #0a0a0a;
+  }
 
-    h1 {
-        text-align: center;
-    }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    h2 {
-        border-bottom: 1px solid #444;
-        padding-bottom: 5px;
-        margin-top: 40px;
-    }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
 
-    .code-container {
-        background: #111;
-        padding: 15px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-        position: relative;
-        box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
+  header {
+    max-width: 900px;
+    margin: 0 auto 56px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
 
-    pre {
-        overflow-x: auto;
-        white-space: pre-wrap;
-    }
+  .header-left h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+    color: #fff;
+  }
 
-    button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: #000;
-        color: #fff;
-        border: 1px solid #444;
-        padding: 6px 12px;
-        cursor: pointer;
-        border-radius: 5px;
-    }
+  .header-left h1 span {
+    color: var(--accent);
+  }
 
-    button:hover {
-        background: #222;
-    }
+  .header-left p {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+
+  .grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover {
+    border-color: #2a2a2a;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    gap: 12px;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .prog-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    background: rgba(232, 255, 58, 0.08);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .prog-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .dot-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+  }
+
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .copy-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 5px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+    transition: all 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232, 255, 58, 0.05);
+  }
+
+  .copy-btn.copied {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(58, 255, 200, 0.05);
+  }
+
+  pre {
+    background: var(--code-bg);
+    padding: 22px 24px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.75;
+    tab-size: 8;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    color: #c8c8c8;
+  }
+
+  /* Syntax highlight */
+  .kw  { color: #e8ff3a; }   /* instructions */
+  .reg { color: #3affc8; }   /* registers */
+  .num { color: #ff9f47; }   /* immediates */
+  .lbl { color: #ff6b9d; }   /* labels */
+  .cmt { color: #3a3a3a; font-style: italic; }  /* comments */
+  .dir { color: #9d7eff; }   /* directives */
 </style>
-
 </head>
 <body>
 
-<h1>DONT SEE HERE BRO</h1>
+<header>
+  <div class="header-left">
+    <h1>ARM <span>Assembly</span></h1>
+    <p>LAB PROGRAMS · ALP · ARM CORTEX-M</p>
+  </div>
+  <div class="badge">ARM Keil µVision</div>
+</header>
 
-<!-- 1 -->
-<h2>1. Office Database</h2>
-<div class="code-container">
-<button onclick="copyCode('code1')">Copy</button>
-<pre id="code1">
-create database office;
-use office;
-
-create table Employee (
-    Empno int,
-    Ename varchar(50),
-    Job varchar(50),
-    Manager_no int,
-    Sal decimal(10,2),
-    Comm decimal(10,2)
-);
-
-desc Employee;
-
-insert into Employee values (1, 'Ammu', 'Nurse', NULL, 500.00, NULL);
-insert into Employee values (2, NULL, 'Teacher', 1, 1000.00, 50.00);
-insert into Employee values (3, 'Alice', NULL, 1, 50.00, 10.00);
-
-select * from Employee;
-
-create user 'newuser'@'localhost' identified by 'password';
-grant all privileges on *.* to 'newuser'@'localhost';
-flush privileges;
-
-insert into Employee values (4, 'Ape', NULL, 1, 40.00, 20.00);
-insert into Employee values (5, 'Cleaner', NULL, 1, 70.00, 80.00);
-
-rollback;
-
-select * from Employee;
-
-alter table Employee 
-add constraint emp_pk primary key (Empno);
-
-alter table Employee 
-modify Sal decimal(10,2) not null;
-
-insert into Employee values (6, 'Test', NULL, 1, NULL, 20.00);
-</pre>
-</div>
-
-<!-- 2 -->
-<h2>2. Army Database</h2>
-<div class="code-container">
-<button onclick="copyCode('code2')">Copy</button>
-<pre id="code2">
-create database army;
-use army;
-
-create table Employee1 (
-    empno int,
-    ename varchar(50),
-    job varchar(50),
-    mgr varchar(50),
-    salary decimal(10,2)
-);
-
-desc Employee1;
-
-alter table Employee1 add commission decimal(10,2);
-
-insert into Employee1 values (1, 'lily', 'nurse', 'ram', 100.00, 200.00);
-insert into Employee1 values (2, 'rose', 'nurse', 'jay', 800.00, 70.00);
-insert into Employee1 values (3, 'tulip', 'clerk', 'job', 900.00, 10.00);
-insert into Employee1 values (4, 'orchid', 'maintain', 'lakshi', 200.00, 40.00);
-insert into Employee1 values (5, 'lotus', 'teacher', 'lyra', 30.00, 300.00);
-
-select * from Employee1;
-
-update Employee1 
-set job = 'senior clerk' 
-where empno = 2;
-
-alter table Employee1 
-change ename empname varchar(50);
-
-delete from Employee1 where empno = 4;
-</pre>
-</div>
-
-<!-- 3 -->
-<h2>3. Bag Database</h2>
-<div class="code-container">
-<button onclick="copyCode('code3')">Copy</button>
-<pre id="code3">
-create database bag;
-use bag;
-
-create table employee2 (
-    eid int primary key,
-    ename varchar(50),
-    age int,
-    salary decimal(10,2)
-);
-
-insert into employee2 values (1, 'maria', 27, 5000.00);
-insert into employee2 values (2, 'rahul', 32, 5000.00);
-insert into employee2 values (3, 'eva', 32, 6000.00);
-insert into employee2 values (4, 'kiran', 40, 5000.00);
-insert into employee2 values (5, 'mathew', 25, 8000.00);
-
-select * from employee2;
-
-select count(ename) as NumberOfEmployees from employee2;
-select max(age) as MaximumAge from employee2;
-select min(age) as MinimumAge from employee2;
-
-select eid, ename, salary 
-from employee2 
-order by salary asc;
-
-select salary, count(*) as NumberOfEmployees
-from employee2
-group by salary;
-</pre>
-</div>
-
-<!-- 4 -->
-<h2>4. Trigger Database</h2>
-<div class="code-container">
-<button onclick="copyCode('code4')">Copy</button>
-<pre id="code4">
-create database man;
-use man;
-
-create table customers (
-id int primary key,
-name varchar(100),
-age int,
-address varchar(100),
-salary decimal(10,2)
-);
-
-create table salary_audit (
-logid int auto_increment primary key,
-custid int,
-actiontype varchar(50),
-old_salary decimal(10,2),
-new_salary decimal(10,2),
-salary_diff decimal(10,2),
-changedate datetime
-);
-
-desc salary_audit;
-
-delimiter $$
-
-create trigger custid_insert_audit
-after insert on customers
-for each row
-begin
-insert into salary_audit (custid, actiontype, old_salary, new_salary, salary_diff, changedate)
-values (new.id, 'insert', null, new.salary, null, now());
-end$$
-
-create trigger custid_delete_audit
-after delete on customers
-for each row
-begin
-insert into salary_audit (custid, actiontype, old_salary, new_salary, salary_diff, changedate)
-values (old.id, 'delete', old.salary, null, null, now());
-end$$
-
-create trigger custid_update_audit
-after update on customers
-for each row
-begin
-insert into salary_audit (custid, actiontype, old_salary, new_salary, salary_diff, changedate)
-values (old.id, 'update', old.salary, new.salary, new.salary - old.salary, now());
-end$$
-
-delimiter ;
-
-insert into customers values (1, 'john', 30, 'bangalore', 50000.00);
-
-select * from salary_audit;
-
-update customers
-set salary = 60000
-where id = 1;
-
-select * from salary_audit;
-
-delete from customers
-where id = 1;
-
-select * from salary_audit;
-</pre>
-</div>
+<div class="grid" id="programs"></div>
 
 <script>
-function copyCode(id) {
-    const text = document.getElementById(id).innerText;
-    navigator.clipboard.writeText(text);
-    alert("Copied!");
+const programs = [
+  {
+    num: "01",
+    title: "16-bit Addition",
+    code: `        AREA ADDITION, CODE, READONLY
+        ENTRY
+
+START
+        MOV     R1, #6400      ; load 6400
+        MOV     R2, #3200      ; load 3200
+        ADD     R3, R1, R2     ; R3 = R1 + R2
+
+        NOP
+        NOP
+        NOP
+
+        END`
+  },
+  {
+    num: "02",
+    title: "Arithmetic & Logical Operations",
+    code: `        AREA PROG2, CODE, READONLY
+        ENTRY
+
+START
+        MOV     R0, #5
+        MOV     R1, #3
+
+        ADD     R2, R0, R1
+        SUB     R3, R0, R1
+        MUL     R4, R0, R1
+
+        AND     R5, R0, R1
+        ORR     R6, R0, R1
+        EOR     R7, R0, R1
+
+        END`
+  },
+  {
+    num: "03",
+    title: "16-bit Multiplication",
+    code: `        AREA MULTIPLY, CODE, READONLY
+        ENTRY
+
+START
+        MOV     R1, #6400
+        MOV     R2, #3200
+        MUL     R3, R1, R2
+
+        END`
+  },
+  {
+    num: "04",
+    title: "Sum of N Natural Numbers",
+    code: `        AREA SUM, CODE, READONLY
+        ENTRY
+
+START
+        MOV     R1, #10
+        MOV     R2, #0
+
+LOOP
+        ADD     R2, R2, R1
+        SUBS    R1, R1, #1
+        BNE     LOOP
+
+        END`
+  },
+  {
+    num: "5a",
+    title: "Largest Element in Array",
+    code: `        AREA LARGEST, CODE, READONLY
+
+ENTRY
+START
+        MOV     R5, #6
+        LDR     R1, =VALUE1
+        LDR     R2, [R1], #4
+
+LOOP
+        LDR     R4, [R1], #4
+        CMP     R2, R4
+        BHI     NEXT
+        MOV     R2, R4
+
+NEXT
+        SUBS    R5, R5, #1
+        CMP     R5, #0
+        BNE     LOOP
+
+        NOP
+        NOP
+        NOP
+
+VALUE1  DCD     0x44444444
+        DCD     0x22222222
+        DCD     0x11111111
+        DCD     0x33333333
+        DCD     0xAAAAAAAA
+        DCD     0x88888888
+        DCD     0x99999999
+
+        END`
+  },
+  {
+    num: "5b",
+    title: "Smallest Element in Array",
+    code: `        AREA SMALLEST, CODE, READONLY
+
+ENTRY
+START
+        MOV     R5, #6
+        LDR     R1, =VALUE1
+        LDR     R2, [R1], #4
+
+LOOP
+        LDR     R4, [R1], #4
+        CMP     R2, R4
+        BLS     NEXT
+        MOV     R2, R4
+
+NEXT
+        SUBS    R5, R5, #1
+        CMP     R5, #0
+        BNE     LOOP
+
+        NOP
+        NOP
+        NOP
+
+VALUE1  DCD     0x44444444
+        DCD     0x22222222
+        DCD     0x11111111
+        DCD     0x33333333
+        DCD     0xAAAAAAAA
+        DCD     0x88888888
+        DCD     0x99999999
+
+        END`
+  },
+  {
+    num: "06",
+    title: "Count Ones & Zeros in 32-bit Data",
+    code: `        AREA ONEZERO, CODE, READONLY
+
+ENTRY
+START
+        MOV     R2, #0
+        MOV     R3, #0
+        MOV     R7, #2
+        LDR     R6, =VALUE
+
+LOOP
+        MOV     R1, #32
+        LDR     R0, [R6], #4
+
+LOOP0
+        MOVS    R0, R0, ROR #1
+        BCS     ONES
+
+ZEROS
+        ADD     R3, R3, #1
+        B       NEXT
+
+ONES
+        ADD     R2, R2, #1
+
+NEXT
+        SUBS    R1, R1, #1
+        BNE     LOOP0
+
+        SUBS    R7, R7, #1
+        CMP     R7, #0
+        BNE     LOOP
+
+        NOP
+        NOP
+        NOP
+
+VALUE   DCD     0xAAAAAAAA
+        DCD     0xAA55AA55
+
+        END`
+  }
+];
+
+function highlight(code) {
+  const instructions = ['MOV','ADD','SUB','MUL','AND','ORR','EOR','SUBS','BNE','CMP','BHI','BLS','BCS','LDR','MOVS','ROR','NOP','DCD','B','ENTRY','AREA','END','BNE','STR'];
+  const directives = ['AREA','CODE','READONLY','ENTRY','END','DCD'];
+
+  return code
+    .replace(/;.*/g, m => `<span class="cmt">${m}</span>`)
+    .replace(/\b(AREA|CODE|READONLY|ENTRY|END|DCD)\b(?![^<]*<\/span>)/g, m => `<span class="dir">${m}</span>`)
+    .replace(/\b(MOV|MOVS|ADD|SUB|MUL|AND|ORR|EOR|SUBS|BNE|CMP|BHI|BLS|BCS|LDR|STR|ROR|NOP|B)\b(?![^<]*<\/span>)/g, m => `<span class="kw">${m}</span>`)
+    .replace(/\b(R[0-9]|R1[0-5])\b(?![^<]*<\/span>)/g, m => `<span class="reg">${m}</span>`)
+    .replace(/#(0x[0-9A-Fa-f]+|\d+)(?![^<]*<\/span>)/g, m => `<span class="num">${m}</span>`)
+    .replace(/^(START|LOOP[0-9]*|NEXT|ZEROS|ONES|VALUE[0-9]*)\b/gm, m => `<span class="lbl">${m}</span>`);
+}
+
+const container = document.getElementById('programs');
+
+programs.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  card.innerHTML = `
+    <div class="card-header">
+      <div class="card-meta">
+        <div class="dot-row">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <span class="prog-num">PROG ${p.num}</span>
+        <span class="prog-title">${p.title}</span>
+      </div>
+      <button class="copy-btn" onclick="copyCode(this, \`${p.code.replace(/`/g,'\\`')}\`)">COPY</button>
+    </div>
+    <pre><code>${highlight(p.code)}</code></pre>
+  `;
+
+  container.appendChild(card);
+});
+
+function copyCode(btn, code) {
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'COPIED';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'COPY';
+      btn.classList.remove('copied');
+    }, 1800);
+  });
 }
 </script>
-
 </body>
 </html>
